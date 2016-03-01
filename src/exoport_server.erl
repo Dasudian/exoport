@@ -125,23 +125,23 @@ handle_call(session_active, _, #st{session = S} = St) ->
     {reply, S =/= undefined, St};
 handle_call(subscribe, {Pid, _Tag}, 
 	    St=#st {session = undefined, subs = Subs}) ->
-    ?dbg("handle_call: {subscribe, ~p} in state ~p.", [Pid, St]),
+    ?debug("handle_call: {subscribe, ~p} in state ~p.", [Pid, St]),
     {reply, {ok, inactive}, St#st {subs = lists:usort([Pid | Subs])}};
 handle_call(subscribe, {Pid, _Tag}, St=#st {subs = Subs}) ->
-    ?dbg("handle_call: {subscribe, ~p} in state ~p.", [Pid, St]),
+    ?debug("handle_call: {subscribe, ~p} in state ~p.", [Pid, St]),
     {reply, {ok, active}, St#st {subs = lists:usort([Pid | Subs])}};
 handle_call(unsubscribe, {Pid, _Tag}, St=#st {subs = Subs}) ->
-    ?dbg("handle_call: {unsubscribe, ~p} in state ~p.", [Pid, St]),
+    ?debug("handle_call: {unsubscribe, ~p} in state ~p.", [Pid, St]),
     {reply, ok, St#st {subs = Subs -- [Pid]}};
 handle_call(_Call, _, St) ->
-    ?dbg("unknown call ~p in state ~p.", [_Call, St]),
+    ?debug("unknown call ~p in state ~p.", [_Call, St]),
     {reply, {error, unknown_call}, St}.
 
 handle_cast(_, St) ->
     {noreply, St}.
 
 handle_info(_Info, St) ->
-    ?dbg("unknown info ~p in state ~p.", [_Info, St]),
+    ?debug("unknown info ~p in state ~p.", [_Info, St]),
     {noreply, St}.
 
 terminate(_, _) ->
@@ -178,12 +178,12 @@ rpc_(M, F, A, #st{session = Session} = St, _) when Session =/= undefined ->
 connect_(St) ->
     case call_rpc_(exodm_rpc, ping, [], St) of
 	{{ok, {reply, pong, []}}, St1} ->
-	    ?dbg("connected", []),
+	    ?debug("connected", []),
 	    check_queue(),
-	    ?dbg("queue checked", []),
+	    ?debug("queue checked", []),
 	    {ok, St1};
 	_Other ->
-	    ?dbg("connect failed, reply ~p", [_Other]),
+	    ?debug("connect failed, reply ~p", [_Other]),
 	    {{error, connect_failed}, St#st{session = undefined}}
     end.
 
@@ -202,7 +202,7 @@ call_rpc_(M, F, A, #st{session = Session0} = St) ->
 	end,
     St1 = St#st{session = {Host, Port}},
     Res = {ok, nice_bert_rpc:call_host(Host, Port, [tcp], M, F, A)},
-    ?dbg("Res = ~p~n", [Res]),
+    ?debug("Res = ~p~n", [Res]),
     {Res, St1}.
 
 
@@ -210,7 +210,7 @@ check_queue() ->
     exoport_dispatcher:check_queue(exoport, rpc).
 
 inform_subscribers(Msg, _St=#st {subs = Subs}) ->
-    ?dbg("inform_subscribers: ~p", [Msg]),
+    ?debug("inform_subscribers: ~p", [Msg]),
     lists:foreach(
       fun(Pid) when is_pid(Pid) -> Pid ! Msg;
 	 (_) -> ok

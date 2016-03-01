@@ -1,3 +1,4 @@
+%% coding: latin-1
 %%%---- BEGIN COPYRIGHT -------------------------------------------------------
 %%%
 %%% Copyright (C) 2012 Feuerlabs, Inc. All rights reserved.
@@ -7,7 +8,7 @@
 %%% file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %%%
 %%%---- END COPYRIGHT ---------------------------------------------------------
-%%% -*- erlang-indent-level: 4; indent-tabs-mode: nil -*-
+%%% -*- coding: latin-1; erlang-indent-level: 4; indent-tabs-mode: nil -*-
 %%% Copyright (c) 2012 Feuerlabs, Inc.
 %%%
 %%% @author Malotte W Lönne <malotte@malotte.net>
